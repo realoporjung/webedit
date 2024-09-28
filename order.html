@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&family=Sriracha&display=swap" rel="stylesheet">
+    <title>หน้าสั่งซื้อ</title>
+</head>
+<body>
+    <header class="header">
+        <h1 class="restaurant-name">E-San Paradies</h1>
+    </header>
+
+    <div class="container">
+        <h2>ตะกร้าสินค้าของคุณ</h2>
+        <div class="cart">
+            <ul id="cart-items"></ul>
+            <p id="total-price">ราคารวม: 0 บาท</p>
+            <a href="http://<ESP32_IP_ADDRESS>/order?item=ข้าวผัด&quantity=1" class="order-button">สั่งซื้อ</a>
+        </div>
+    </div>
+
+    <script>
+        function displayCart() {
+            const cartItemsList = document.getElementById('cart-items');
+            cartItemsList.innerHTML = '';
+
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            let totalPrice = 0;
+
+            cart.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${item.name} (x${item.quantity}) - ${item.price * item.quantity} บาท`;
+                cartItemsList.appendChild(listItem);
+                totalPrice += item.price * item.quantity;
+            });
+
+            document.getElementById('total-price').textContent = `ราคารวม: ${totalPrice} บาท`;
+        }
+
+        window.onload = displayCart;
+    </script>
+</body>
+</html>

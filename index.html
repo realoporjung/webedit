@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&family=Sriracha&display=swap" rel="stylesheet">
+    <title>รายการสั่งอาหาร</title>
+</head>
+<body>
+    <header class="header">
+        <div class="banner">
+            <img src="https://via.placeholder.com/150" alt="โลโก้ร้าน" class="logo">
+            <h1 class="restaurant-name">E-San Paradies</h1>
+            <p class="slogan">อร่อยสุด! รสชาติแท้ๆจากอีสาน</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <h2>รายการสั่งอาหาร</h2>
+        <div class="menu">
+            <!-- เมนูที่ 1 -->
+            <div class="menu-item">
+                <img src="https://via.placeholder.com/150" alt="ข้าวผัด">
+                <h3>ข้าวผัด</h3>
+                <p>ราคา: <strong class="price">50 บาท</strong></p>
+                <input type="number" min="1" value="1" class="quantity-input" aria-label="จำนวนข้าวผัด">
+                <button class="order-button" onclick="addToCart('ข้าวผัด', 50)">เพิ่มไปยังตะกร้า</button>
+            </div>
+            <!-- เมนูที่ 2 -->
+            <div class="menu-item">
+                <img src="https://via.placeholder.com/150" alt="ต้มยำกุ้ง">
+                <h3>ต้มยำกุ้ง</h3>
+                <p>ราคา: <strong class="price">80 บาท</strong></p>
+                <input type="number" min="1" value="1" class="quantity-input" aria-label="จำนวนต้มยำกุ้ง">
+                <button class="order-button" onclick="addToCart('ต้มยำกุ้ง', 80)">เพิ่มไปยังตะกร้า</button>
+            </div>
+            <!-- เมนูที่ 3 -->
+            <div class="menu-item">
+                <img src="https://via.placeholder.com/150" alt="ผัดไทย">
+                <h3>ผัดไทย</h3>
+                <p>ราคา: <strong class="price">60 บาท</strong></p>
+                <input type="number" min="1" value="1" class="quantity-input" aria-label="จำนวนผัดไทย">
+                <button class="order-button" onclick="addToCart('ผัดไทย', 60)">เพิ่มไปยังตะกร้า</button>
+            </div>
+            <!-- เมนูที่ 4 -->
+            <div class="menu-item">
+                <img src="https://via.placeholder.com/150" alt="ส้มตำ">
+                <h3>ส้มตำ</h3>
+                <p>ราคา: <strong class="price">40 บาท</strong></p>
+                <input type="number" min="1" value="1" class="quantity-input" aria-label="จำนวนส้มตำ">
+                <button class="order-button" onclick="addToCart('ส้มตำ', 40)">เพิ่มไปยังตะกร้า</button>
+            </div>
+            <!-- เมนูที่ 5 -->
+            <div class="menu-item">
+                <img src="https://via.placeholder.com/150" alt="น้ำเปล่า">
+                <h3>น้ำเปล่า</h3>
+                <p>ราคา: <strong class="price">10 บาท</strong></p>
+                <input type="number" min="1" value="1" class="quantity-input" aria-label="จำนวนน้ำเปล่า">
+                <button class="order-button" onclick="addToCart('น้ำเปล่า', 10)">เพิ่มไปยังตะกร้า</button>
+            </div>
+            <!-- เมนูที่ 6 -->
+            <div class="menu-item">
+                <img src="https://via.placeholder.com/150" alt="น้ำโค้ก">
+                <h3>น้ำโค้ก</h3>
+                <p>ราคา: <strong class="price">15 บาท</strong></p>
+                <input type="number" min="1" value="1" class="quantity-input" aria-label="จำนวนน้ำโค้ก">
+                <button class="order-button" onclick="addToCart('น้ำโค้ก', 15)">เพิ่มไปยังตะกร้า</button>
+            </div>
+        </div>
+        <div class="cart">
+            <h3>ตะกร้าสินค้า</h3>
+            <ul id="cart-items"></ul>
+            <p id="total-price">ราคารวม: 0 บาท</p>
+            <button onclick="goToOrderPage()" class="checkout-button">ไปยังหน้าสั่งซื้อ</button>
+        </div>
+    </div>
+
+    <script>
+        function addToCart(itemName, itemPrice) {
+            const quantityInput = event.target.previousElementSibling;
+            const quantity = parseInt(quantityInput.value);
+
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            let existingItem = cart.find(item => item.name === itemName);
+
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.push({ name: itemName, price: itemPrice, quantity: quantity });
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartDisplay();
+            alert(`${itemName} ถูกเพิ่มเข้าตะกร้าแล้ว! จำนวน: ${quantity}`);
+        }
+
+        function updateCartDisplay() {
+            const cartItemsList = document.getElementById('cart-items');
+            cartItemsList.innerHTML = '';
+
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            let totalPrice = 0;
+
+            cart.forEach((item, index) => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${item.name} (x${item.quantity}) - ${item.price * item.quantity} บาท`;
+                
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'ลบ';
+                removeButton.onclick = () => removeFromCart(index);
+                
+                listItem.appendChild(removeButton);
+                cartItemsList.appendChild(listItem);
+                totalPrice += item.price * item.quantity;
+            });
+
+            document.getElementById('total-price').textContent = `ราคารวม: ${totalPrice} บาท`;
+        }
+
+        function removeFromCart(index) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartDisplay();
+        }
+
+        function goToOrderPage() {
+            window.location.href = 'order.html';
+        }
+
+        window.onload = updateCartDisplay;
+    </script>
+</body>
+</html>
